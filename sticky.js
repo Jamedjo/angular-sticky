@@ -30,26 +30,14 @@ angular.module('sticky', []).directive("sticky", function($window) {
             var item = scope._stickyElements[i];
 
             if (!item.isStuck && pos > item.start) {
-              item.element.attr("style","position:fixed;top:"+top_offset+"px;left:"+(item.element[0].getBoundingClientRect().left-left_offset)+"px;width:"+item.element[0].clientWidth+"px;");
+              item.element.attr("style","position:fixed;top:"+top_offset+"px;left:"+(item.left-left_offset)+"px;width:"+item.width+"px;");
               item.element.addClass("stuck");
-              console.log(item.element);
               item.isStuck = true;
-
-              if (item.placeholder) {
-                item.placeholder = angular.element("<div></div>")
-                    .css({height: item.element.outerHeight() + "px"})
-                    .insertBefore(item.element);
-              }
             }
             else if (item.isStuck && pos < item.start) {
               item.element.removeClass("stuck");
               item.element.attr("style","");
               item.isStuck = false;
-
-              if (item.placeholder) {
-                item.placeholder.remove();
-                item.placeholder = true;
-              }
             }
           }
         });
@@ -59,8 +47,6 @@ angular.module('sticky', []).directive("sticky", function($window) {
             var item = scope._stickyElements[i];
             if (!item.isStuck) {
               item.start = offsetTop(item.element)-top_offset;
-            } else if (item.placeholder) {
-              item.start = offsetTop(item.placeholder)-top_offset;
             }
           }
         };
@@ -71,8 +57,9 @@ angular.module('sticky', []).directive("sticky", function($window) {
       var item = {
         element: element,
         isStuck: false,
-        placeholder: attrs.usePlaceholder !== undefined,
-        start: offsetTop(element)-top_offset
+        start: offsetTop(element)-top_offset,
+        width: element[0].clientWidth,
+        left: item.element[0].getBoundingClientRect().left
       };
 
       scope._stickyElements.push(item);
