@@ -13,10 +13,13 @@ function windowScrollTop() {
   return window.pageYOffset || body.scrollTop; 
 }
 
-function offsetTop(elm) { 
-  return elm[0].getBoundingClientRect().top + windowScrollTop();
+function getStyle(el,styleProp){
+  if (el.currentStyle)
+    var y = el.currentStyle[styleProp];
+  else if (window.getComputedStyle)
+    var y = document.defaultView.getComputedStyle(el,null).getPropertyValue(styleProp);
+  return y;
 }
-
 
 angular.module('sticky', []).directive("sticky", function($window) {
   return {
@@ -53,8 +56,8 @@ angular.module('sticky', []).directive("sticky", function($window) {
         var updateItem = function(item){
           item.topOffset = scope.$apply(attrs.stickyTop);
           item.leftOffset = scope.$apply(attrs.stickyLeft);
-          item.start = offsetTop(item.element)-item.topOffset-20;
-          item.width = item.element[0].clientWidth;
+          item.start = item.element[0].offsetTop-item.topOffset-parseInt(getStyle(item.element[0],'margin-top'),10);
+          item.width = item.element[0].offsetWidth;
           item.left = item.element[0].getBoundingClientRect().left;
         }
         var recheckPositions = function() {
