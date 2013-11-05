@@ -1,5 +1,17 @@
 angular.module('sticky', []);
 
+
+
+function windowScrollTop() { 
+  var body = document.documentElement || document.body; 
+  return window.pageYOffset || body.scrollTop; 
+}
+
+function offsetTop(elm) { 
+  return elm[0].getBoundingClientRect().top + windowScrollTop();
+}
+
+
 angular.module('sticky', []).directive("sticky", function($window) {
   return {
     link: function(scope, element, attrs) {
@@ -9,14 +21,16 @@ angular.module('sticky', []).directive("sticky", function($window) {
       if (scope._stickyElements === undefined) {
         scope._stickyElements = [];
 
-        $win.bind("scroll.sticky", function(e) {
-          var pos = $win.scrollTop();
+        $win.bind("scroll", function(e) {
+          var pos = windowScrollTop();
           for (var i=0; i<scope._stickyElements.length; i++) {
 
             var item = scope._stickyElements[i];
 
             if (!item.isStuck && pos > item.start) {
+              item.element.attr("style","left:"+(item.element[0].getBoundingClientRect().left-25)+"px;width:"+item.element[0].clientWidth+"px;");
               item.element.addClass("stuck");
+              console.log(item.element);
               item.isStuck = true;
 
               if (item.placeholder) {
@@ -41,9 +55,9 @@ angular.module('sticky', []).directive("sticky", function($window) {
           for (var i=0; i<scope._stickyElements.length; i++) {
             var item = scope._stickyElements[i];
             if (!item.isStuck) {
-              item.start = item.element.offset().top;
+              item.start = offsetTop(item.element);
             } else if (item.placeholder) {
-              item.start = item.placeholder.offset().top;
+              item.start = offsetTop(item.placeholder);
             }
           }
         };
@@ -55,7 +69,7 @@ angular.module('sticky', []).directive("sticky", function($window) {
         element: element,
         isStuck: false,
         placeholder: attrs.usePlaceholder !== undefined,
-        start: element.offset().top
+        start: offsetTop(element)
       };
 
       scope._stickyElements.push(item);
