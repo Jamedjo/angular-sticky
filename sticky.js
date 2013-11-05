@@ -1,6 +1,12 @@
 angular.module('sticky', []);
 
-
+function toPx(n){ 
+  if(!isNaN(n)){
+    return n+"px";
+  } else {
+    return n;
+  }
+}
 
 function windowScrollTop() { 
   var body = document.documentElement || document.body; 
@@ -15,13 +21,10 @@ function offsetTop(elm) {
 angular.module('sticky', []).directive("sticky", function($window) {
   return {
     link: function(scope, element, attrs) {
-      var top_offset = 70;
-      var left_offset = 25;
 
       var $win = angular.element($window);
-
       var stickyItem = function(item){
-        item.element.attr("style","position:fixed;top:"+top_offset+"px;left:"+(item.left-left_offset)+"px;width:"+item.width+"px;");
+        item.element.attr("style","position:fixed;top:"+toPx(item.topOffset)+";left:"+(item.left-item.leftOffset)+"px;width:"+item.width+"px;");
         item.element.addClass("stuck");
         item.isStuck = true;
       };
@@ -48,11 +51,14 @@ angular.module('sticky', []).directive("sticky", function($window) {
         });
 
         var updateItem = function(item){
-          item.start = offsetTop(item.element)-top_offset,
-          item.width = item.element[0].clientWidth,
-          item.left = item.element[0].getBoundingClientRect().left
+          item.topOffset = scope.$apply(attrs.stickyTop);
+          item.leftOffset = scope.$apply(attrs.stickyLeft);
+          item.start = offsetTop(item.element)-item.topOffset-20;
+          item.width = item.element[0].clientWidth;
+          item.left = item.element[0].getBoundingClientRect().left;
         }
         var recheckPositions = function() {
+          console.log();
           for (var i=0; i<scope._stickyElements.length; i++) {
             var item = scope._stickyElements[i];
             if (!item.isStuck) {
@@ -72,7 +78,6 @@ angular.module('sticky', []).directive("sticky", function($window) {
         element: element,
         isStuck: false
       };
-      updateItem(item);
 
       scope._stickyElements.push(item);
 
