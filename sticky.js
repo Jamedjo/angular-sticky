@@ -61,7 +61,6 @@ angular.module('sticky', []).directive("sticky", function($window) {
           item.left = item.element[0].getBoundingClientRect().left;
         }
         var recheckPositions = function() {
-          console.log();
           for (var i=0; i<scope._stickyElements.length; i++) {
             var item = scope._stickyElements[i];
             if (!item.isStuck) {

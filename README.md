@@ -3,29 +3,31 @@ angular-sticky
 
 AngularJS directive to cause elements to stick to the top of the page when scrolling past
 
-Requires jQuery 1.2.6+.
+No jQuery dependency.
 
 A simple directive enables sticky functionality to be added to elements, causing them to stick to the top of
 the screen as they are scrolled past.
 
-Quick implementation and only tested on latest Chrome and Firefox, so use at your peril...
+Quick implementation and only tested on latest Chrome, so use at your peril...
 
 # Features
 
-  * Allows use of a placeholder to stop the page jumping
+  * ~~Allows use of a placeholder to stop the page jumping~~
   * Recalculates element position on page load and on window resize
-  * Handles multiple sticky elements efficiently
 
 # Usage
 
-Include the .js and .css file in your page then enable usage of the directive by including the "sticky" module
+Include the .js file in your page then enable usage of the directive by including the "sticky" module
 as a dependency. Use the directive as follows:
 
     <div sticky>I'm all sticky</div>
 
-To stop the page jumping when the element is fixed to the top of the screen a placeholder can be substituted
-for it as follows:
+To smoothly alighn the sticky as it fixes, you can set top and left offsets:
 
-    <div sticky use-placeholder>I'm all sticky</div>
+    <div sticky sticky-top="stickyTop()" sticky-left="31">I'm all sticky</div>
 
-See the example directory for a working example.
+`sticky-top` and `sticky-left` can be numbers or functions which return numbers. E.g.
+
+    $scope.stickyTop = function(){
+      return Math.max(0,document.querySelector('.navbar-fixed-top').getBoundingClientRect().bottom)+20;
+    }
