@@ -15,6 +15,8 @@ function offsetTop(elm) {
 angular.module('sticky', []).directive("sticky", function($window) {
   return {
     link: function(scope, element, attrs) {
+      var top_offset = 70;
+      var left_offset = 25;
 
       var $win = angular.element($window);
 
@@ -28,7 +30,7 @@ angular.module('sticky', []).directive("sticky", function($window) {
             var item = scope._stickyElements[i];
 
             if (!item.isStuck && pos > item.start) {
-              item.element.attr("style","left:"+(item.element[0].getBoundingClientRect().left-25)+"px;width:"+item.element[0].clientWidth+"px;");
+              item.element.attr("style","position:fixed;top:"+top_offset+"px;left:"+(item.element[0].getBoundingClientRect().left-left_offset)+"px;width:"+item.element[0].clientWidth+"px;");
               item.element.addClass("stuck");
               console.log(item.element);
               item.isStuck = true;
@@ -41,6 +43,7 @@ angular.module('sticky', []).directive("sticky", function($window) {
             }
             else if (item.isStuck && pos < item.start) {
               item.element.removeClass("stuck");
+              item.element.attr("style","");
               item.isStuck = false;
 
               if (item.placeholder) {
@@ -55,9 +58,9 @@ angular.module('sticky', []).directive("sticky", function($window) {
           for (var i=0; i<scope._stickyElements.length; i++) {
             var item = scope._stickyElements[i];
             if (!item.isStuck) {
-              item.start = offsetTop(item.element);
+              item.start = offsetTop(item.element)-top_offset;
             } else if (item.placeholder) {
-              item.start = offsetTop(item.placeholder);
+              item.start = offsetTop(item.placeholder)-top_offset;
             }
           }
         };
@@ -69,7 +72,7 @@ angular.module('sticky', []).directive("sticky", function($window) {
         element: element,
         isStuck: false,
         placeholder: attrs.usePlaceholder !== undefined,
-        start: offsetTop(element)
+        start: offsetTop(element)-top_offset
       };
 
       scope._stickyElements.push(item);
